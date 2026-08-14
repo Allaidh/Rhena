@@ -13,6 +13,19 @@ public class Drink {
     public int volume;
     public int caffeine;
     public long timestamp;
+//    public byte[] imageBlob;
+
+    public int getCaffeine() {
+        return caffeine;
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
 
     public Drink(String title, String description, int volume, int caffeine, long timestamp) {
         this.title = title;

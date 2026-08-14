@@ -19,7 +19,7 @@
             android:id="@+id/imageView"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:srcCompat="@drawable/rhena_logo" />
+            app:srcCompat="@drawable/rhena_logo_green" />
 
     </LinearLayout>
 
@@ -46,15 +46,6 @@
                 android:ems="10"
                 android:hint="Title"
                 android:inputType="text" />
-
-            <Button
-                android:id="@+id/btnCamera"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="📷"
-                android:textSize="60sp" />
 
             <EditText
                 android:id="@+id/etDescription"
@@ -121,8 +112,8 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:itemIconTint="@color/nav_item_color"
-        app:itemTextColor="@color/nav_item_color"
+        app:itemIconTint="@color/nav_item_green"
+        app:itemTextColor="@color/nav_item_green"
         app:menu="@menu/bottom_nav_menu" />
 
 </LinearLayout>
