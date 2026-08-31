@@ -36,4 +36,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_create">Create</string>
     <string name="nav_account">Account</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+    <string name="update_post">Update Post</string>
 </resources>

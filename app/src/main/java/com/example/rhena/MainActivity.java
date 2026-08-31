@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.text.SimpleDateFormat;
@@ -49,7 +51,15 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadDrinks();
+    }
+
+    private void loadDrinks() {
         Executors.newSingleThreadExecutor().execute(() -> {
             drinks = AppDatabase.getDatabase(getApplicationContext()).drinkDao().getAll();
 
@@ -68,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 LinearLayout containerTW = findViewById(R.id.weekConsumptionContainer);
+                containerTW.removeAllViews();
                 LinearLayout layoutAmount = new LinearLayout(MainActivity.this);
                 layoutAmount.setOrientation(VERTICAL);
                 TextView amountTW = new TextView(MainActivity.this);
@@ -115,21 +126,34 @@ public class MainActivity extends AppCompatActivity {
                     Date drinkDate = new Date(drink.timestamp);
                     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
                     String formattedDate = sdf.format(drinkDate);
+
                     dateTv.setText(formattedDate);
                     layoutTD.addView(dateTv);
+
+                    TextView menuButton = new TextView(MainActivity.this);
+                    menuButton.setText("⋮");
+                    menuButton.setTextSize(20);
+                    menuButton.setPadding(16, 0, 16, 0);
+                    menuButton.setOnClickListener(v -> {
+                        PopupMenu popup = new PopupMenu(MainActivity.this, v);
+                        popup.getMenuInflater().inflate(R.menu.drink_item_menu, popup.getMenu());
+                        popup.setOnMenuItemClickListener(item -> {
+                            if (item.getItemId() == R.id.action_delete) {
+                                deleteDrink(drink);
+                                return true;
+                            } else if (item.getItemId() == R.id.action_edit) {
+                                Intent intent = new Intent(MainActivity.this, CreateActivity.class);
+                                intent.putExtra("drink_id", drink.id);
+                                startActivity(intent);
+                                return true;
+                            }
+                            return false;
+                        });
+                        popup.show();
+                    });
+                    layoutTD.addView(menuButton);
+
                     layout.addView(layoutTD);
-
-
-
-//                    if (drink.imageBlob != null) {
-//                        ImageView imageView = new ImageView(MainActivity.this);
-//                        imageView.setImageBitmap(BitmapFactory.decodeByteArray(drink.imageBlob, 0, drink.imageBlob.length));
-//                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//                                ViewGroup.LayoutParams.MATCH_PARENT, 400);
-//                        imageView.setLayoutParams(params);
-//                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//                        layout.addView(imageView);
-//                    }
 
                     TextView desctiption = new TextView(MainActivity.this);
                     desctiption.setText(drink.description);
@@ -156,8 +180,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         });
+    }
 
-
-
+    private void deleteDrink(Drink drink) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            AppDatabase.getDatabase(getApplicationContext()).drinkDao().delete(drink);
+            runOnUiThread(() -> {
+                Toast.makeText(MainActivity.this, "Drink deleted", Toast.LENGTH_SHORT).show();
+                loadDrinks();
+            });
+        });
     }
 }

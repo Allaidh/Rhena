@@ -25,25 +25,8 @@ public class CreateActivity extends AppCompatActivity {
 
     private EditText etTitle, etDescription, etVolume, etCaffeine;
     private Button btnSubmit, btnCamera;
-//    private byte[] selectedImageBlob = null;
-//    private Uri cameraImageUri = null;
-
-//    private final ActivityResultLauncher<Intent> pickGallery =
-//            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-//                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-//                    Uri uri = result.getData().getData();
-//                    if (uri != null) {
-//                        processImage(uri);
-//                    }
-//                }
-//            });
-//
-//    private final ActivityResultLauncher<Uri> takePicture =
-//            registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
-//                if (success && cameraImageUri != null) {
-//                    processImage(cameraImageUri);
-//                }
-//            });
+    private int drinkId = -1;
+    private Drink existingDrink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +38,11 @@ public class CreateActivity extends AppCompatActivity {
         etVolume = findViewById(R.id.etVolume);
         etCaffeine = findViewById(R.id.etCaffeine);
         btnSubmit = findViewById(R.id.btnSubmit);
-//        btnCamera = findViewById(R.id.btnCamera);
+
+        if (getIntent().hasExtra("drink_id")) {
+            drinkId = getIntent().getIntExtra("drink_id", -1);
+            loadExistingDrink();
+        }
 
         btnSubmit.setOnClickListener(v -> {
             saveDrink();
@@ -130,6 +117,21 @@ public class CreateActivity extends AppCompatActivity {
 //        }
 //    }
 
+    private void loadExistingDrink() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            existingDrink = AppDatabase.getDatabase(getApplicationContext()).drinkDao().getById(drinkId);
+            runOnUiThread(() -> {
+                if (existingDrink != null) {
+                    etTitle.setText(existingDrink.title);
+                    etDescription.setText(existingDrink.description);
+                    etVolume.setText(String.valueOf(existingDrink.volume));
+                    etCaffeine.setText(String.valueOf(existingDrink.caffeine));
+                    btnSubmit.setText(R.string.update_post);
+                }
+            });
+        });
+    }
+
     private void saveDrink() {
         String title = etTitle.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
@@ -141,24 +143,34 @@ public class CreateActivity extends AppCompatActivity {
             return;
         }
 
-        int volume = 0;
+        int tempVolume = 0;
         try {
-            if (!volumeStr.isEmpty()) volume = Integer.parseInt(volumeStr);
+            if (!volumeStr.isEmpty()) tempVolume = Integer.parseInt(volumeStr);
         } catch (NumberFormatException ignored) {}
 
-        int caffeine = 0;
+        int tempCaffeine = 0;
         try {
-            if (!caffeineStr.isEmpty()) caffeine = Integer.parseInt(caffeineStr);
+            if (!caffeineStr.isEmpty()) tempCaffeine = Integer.parseInt(caffeineStr);
         } catch (NumberFormatException ignored) {}
 
-        long timestamp = System.currentTimeMillis();
-
-        Drink drink = new Drink(title, description, volume, caffeine, timestamp);
+        final int volume = tempVolume;
+        final int caffeine = tempCaffeine;
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            AppDatabase.getDatabase(getApplicationContext()).drinkDao().insert(drink);
+            DrinkDao dao = AppDatabase.getDatabase(getApplicationContext()).drinkDao();
+            if (existingDrink != null) {
+                existingDrink.title = title;
+                existingDrink.description = description;
+                existingDrink.volume = volume;
+                existingDrink.caffeine = caffeine;
+                dao.update(existingDrink);
+            } else {
+                long timestamp = System.currentTimeMillis();
+                Drink drink = new Drink(title, description, volume, caffeine, timestamp);
+                dao.insert(drink);
+            }
             runOnUiThread(() -> {
-                Toast.makeText(CreateActivity.this, "Drink saved!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateActivity.this, existingDrink != null ? "Drink updated!" : "Drink saved!", Toast.LENGTH_SHORT).show();
                 finish();
             });
         });
