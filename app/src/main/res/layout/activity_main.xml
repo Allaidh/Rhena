@@ -21,7 +21,24 @@
             android:id="@+id/imageView"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_gravity="start"
             app:srcCompat="@drawable/rhena_logo_green" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnLibrary"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="#00FFFFFF"
+            app:icon="@drawable/documents_search_icon"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="38dp"
+            app:iconTint="?android:attr/colorForeground" />
 
     </LinearLayout>
 

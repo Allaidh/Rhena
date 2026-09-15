@@ -1,6 +1,8 @@
 package com.example.rhena;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager2 viewPager;
     private BottomNavigationView bottomNavigation;
     private boolean isInternalNavigation = false;
+    private Button btnLibrary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,11 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = findViewById(R.id.viewPager);
         bottomNavigation = findViewById(R.id.bottomNavigation);
+        btnLibrary = findViewById(R.id.btnLibrary);
 
         MainViewPagerAdapter adapter = new MainViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
-        // Sync ViewPager with BottomNavigation
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -50,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Sync BottomNavigation with ViewPager
         bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.navigation_home) {
@@ -73,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             return false;
+        });
+
+        btnLibrary.setOnClickListener(view -> {
+//            Intent intent = new Intent(this.getApplicationContext(), LibraryActivity.class); // zrób to jako fragment w tak, żeby w viewpagerze się pokazywało normalnie ig
+//            startActivity(intent);
         });
     }
     

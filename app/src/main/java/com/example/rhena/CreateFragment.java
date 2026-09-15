@@ -77,6 +77,7 @@ public class CreateFragment extends Fragment {
         etCaffeine.setText("");
         btnSubmit.setText("Submit");
         dateSection.setVisibility(View.GONE);
+        calendar = Calendar.getInstance();
     }
 
     private void loadExistingDrink() {
@@ -141,26 +142,28 @@ public class CreateFragment extends Fragment {
 
         final int volume = tempVolume;
         final int caffeine = tempCaffeine;
+        final Drink drinkToSave = existingDrink;
+        final long timestamp = calendar.getTimeInMillis();
 
         Executors.newSingleThreadExecutor().execute(() -> {
             DrinkDao dao = AppDatabase.getDatabase(requireContext().getApplicationContext()).drinkDao();
-            if (existingDrink != null) {
-                existingDrink.title = title;
-                existingDrink.description = description;
-                existingDrink.volume = volume;
-                existingDrink.caffeine = caffeine;
-                existingDrink.timestamp = calendar.getTimeInMillis();
-                dao.update(existingDrink);
+            if (drinkToSave != null) {
+                drinkToSave.title = title;
+                drinkToSave.description = description;
+                drinkToSave.volume = volume;
+                drinkToSave.caffeine = caffeine;
+                drinkToSave.timestamp = timestamp;
+                dao.update(drinkToSave);
             } else {
-                long timestamp = System.currentTimeMillis();
                 Drink drink = new Drink(title, description, volume, caffeine, timestamp);
                 dao.insert(drink);
             }
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    Toast.makeText(getContext(), existingDrink != null ? "Drink updated!" : "Drink saved!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), drinkToSave != null ? "Drink updated!" : "Drink saved!", Toast.LENGTH_SHORT).show();
                     DrinkViewModel viewModel = new ViewModelProvider(requireActivity()).get(DrinkViewModel.class);
                     viewModel.clearSelection();
+                    resetForm();
                     if (getActivity() instanceof MainActivity) {
                         ((MainActivity) getActivity()).findViewById(R.id.viewPager).post(() -> {
                             ((androidx.viewpager2.widget.ViewPager2) getActivity().findViewById(R.id.viewPager)).setCurrentItem(0);
