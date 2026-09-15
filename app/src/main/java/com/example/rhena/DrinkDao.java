@@ -24,4 +24,13 @@ public interface DrinkDao {
 
     @Delete
     void delete(Drink drink);
+
+    @Query("SELECT * FROM PresetDrink ORDER BY name ASC")
+    List<PresetDrink> getAllPresetDrinks();
+
+    @Insert
+    void insertPresetDrink(PresetDrink presetDrink);
+
+    @Delete
+    void deletePresetDrink(PresetDrink presetDrink);
 }

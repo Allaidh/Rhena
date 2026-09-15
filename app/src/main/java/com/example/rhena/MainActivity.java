@@ -2,7 +2,9 @@ package com.example.rhena;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.navigation_home) {
                 viewPager.setCurrentItem(0);
+                btnLibrary.setVisibility(View.GONE);
                 return true;
             } else if (id == R.id.navigation_create) {
                 // Only clear selection if user actually tapped the tab directly (not triggered by swipe or programmatic navigate)
@@ -69,20 +72,37 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 viewPager.setCurrentItem(1);
+                btnLibrary.setVisibility(View.VISIBLE);
                 return true;
             } else if (id == R.id.navigation_account) {
                 viewPager.setCurrentItem(2);
+                btnLibrary.setVisibility(View.GONE);
                 return true;
             }
             return false;
         });
 
         btnLibrary.setOnClickListener(view -> {
-//            Intent intent = new Intent(this.getApplicationContext(), LibraryActivity.class); // zrób to jako fragment w tak, żeby w viewpagerze się pokazywało normalnie ig
-//            startActivity(intent);
+            Intent intent = new Intent(this.getApplicationContext(), LibraryActivity.class);
+            startActivityForResult(intent, 15);
         });
     }
-    
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 15 && resultCode == RESULT_OK && data != null) {
+            String name = data.getStringExtra("name");
+            int vol = data.getIntExtra("volume", 0);
+            int caf = data.getIntExtra("caffeine", 0);
+
+            ((EditText)findViewById(R.id.etTitle)).setText(name);
+            ((EditText)findViewById(R.id.etVolume)).setText(String.valueOf(vol));
+            ((EditText)findViewById(R.id.etCaffeine)).setText(String.valueOf(caf));
+        }
+    }
+
     public void navigateToCreate(int drinkId) {
         isInternalNavigation = true;
         DrinkViewModel viewModel = new ViewModelProvider(this).get(DrinkViewModel.class);
