@@ -1,6 +1,7 @@
 package com.example.rhena;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class PresetDrinkAdapter extends RecyclerView.Adapter<PresetDrinkAdapter.ViewHolder> {
 
@@ -42,6 +44,25 @@ public class PresetDrinkAdapter extends RecyclerView.Adapter<PresetDrinkAdapter.
             Activity activity = (Activity) v.getContext();
             activity.setResult(Activity.RESULT_OK, intent);
             activity.finish();
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle("Delete Preset")
+                    .setMessage("Are you sure you want to delete this preset?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        Executors.newSingleThreadExecutor().execute(() -> {
+                            AppDatabase.getDatabase(v.getContext().getApplicationContext()).drinkDao().deletePresetDrink(drink);
+                        });
+                        int currentPosition = holder.getAdapterPosition();
+                        if (currentPosition != RecyclerView.NO_POSITION) {
+                            drinks.remove(currentPosition);
+                            notifyItemRemoved(currentPosition);
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+            return true;
         });
     }
 

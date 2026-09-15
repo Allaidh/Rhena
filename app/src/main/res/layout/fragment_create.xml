@@ -93,5 +93,12 @@
             android:layout_marginTop="16dp"
             android:text="Submit" />
 
+        <Button
+            android:id="@+id/btnSave"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save to Library" />
+
     </LinearLayout>
 </ScrollView>

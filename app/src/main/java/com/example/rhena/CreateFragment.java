@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,6 +29,8 @@ public class CreateFragment extends Fragment {
     private int drinkId = -1;
     private Drink existingDrink;
     private Calendar calendar = Calendar.getInstance();
+    private static volatile AppDatabase INSTANCE;
+
 
     @Nullable
     @Override
@@ -66,6 +67,23 @@ public class CreateFragment extends Fragment {
 
         etDate.setOnClickListener(v -> showDateTimePicker());
         btnSubmit.setOnClickListener(v -> saveDrink());
+        view.findViewById(R.id.btnSave).setOnClickListener(v -> {
+            String title = etTitle.getText().toString().trim();
+            String volStr = etVolume.getText().toString().trim();
+            String cafStr = etCaffeine.getText().toString().trim();
+
+            int vol = volStr.isEmpty() ? 0 : Integer.parseInt(volStr);
+            int caf = cafStr.isEmpty() ? 0 : Integer.parseInt(cafStr);
+
+            Executors.newSingleThreadExecutor().execute(() -> {
+                AppDatabase.getDatabase(requireContext()).drinkDao().insertPresetDrink(
+                        new PresetDrink(title, vol, caf)
+                );
+                getActivity().runOnUiThread(() ->
+                        Toast.makeText(getContext(), "Saved to Library!", Toast.LENGTH_SHORT).show()
+                );
+            });
+        });
     }
 
     private void resetForm() {
