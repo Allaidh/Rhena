@@ -5,7 +5,7 @@ plugins {
 android {
     namespace = "com.example.rhena"
     compileSdk {
-        version = release(36) {
+        version = release(37) {
             minorApiLevel = 1
         }
     }
@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.example.rhena"
         minSdk = 29
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -53,4 +53,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
     implementation("com.github.woheller69:FreeDroidWarn:V1.+")
+    implementation("com.jjoe64:graphview:4.2.2"){
+        exclude("com.android.support")
+    }
 }

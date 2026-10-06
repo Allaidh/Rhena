@@ -1,12 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Account Screen"
-        android:textSize="24sp" />
-</FrameLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        app:layout_scrollFlags="scroll">
+
+
+        <TextView
+            android:id="@+id/tvPlaceholder1"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:foregroundGravity="center|center_horizontal"
+            android:gravity="center"
+            android:text="Graph Placeholder" />
+
+        <TextView
+            android:id="@+id/tvPlaceholder2"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:gravity="center"
+            android:text="Calendar Placeholder" />
+
+        <TextView
+            android:id="@+id/tvPlaceholder3"
+            android:layout_width="match_parent"
+            android:layout_height="275dp"
+            android:text="Records Placeholder" />
+
+        <Button
+            android:id="@+id/btnExport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?android:attr/colorBackground"
+            android:text="Export your database"
+            android:textAlignment="viewStart"
+            android:textColor="?android:attr/colorForeground"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/right_arrow"
+            app:iconGravity="end"
+            app:iconTint="?android:attr/colorForeground"
+            app:rippleColor="#4CAF50" />
+
+        <Button
+            android:id="@+id/btnImport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?android:attr/colorBackground"
+            android:text="Import your database"
+            android:textAlignment="viewStart"
+            android:textColor="?android:attr/colorForeground"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/right_arrow"
+            app:iconGravity="end"
+            app:iconTint="?android:attr/colorForeground"
+            app:rippleColor="#4CAF50" />
+    </LinearLayout>
+</ScrollView>
