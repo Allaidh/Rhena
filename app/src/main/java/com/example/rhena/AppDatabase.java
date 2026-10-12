@@ -30,6 +30,32 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+    public static void checkpoint(Context context) {
+        AppDatabase db = getDatabase(context);
+        if (db != null && db.isOpen()) {
+            try (android.database.Cursor cursor = db.getOpenHelper().getWritableDatabase().query("PRAGMA wal_checkpoint(FULL);", null)) {
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void closeDatabase() {
+        if (INSTANCE != null) {
+            synchronized (AppDatabase.class) {
+                if (INSTANCE != null) {
+                    if (INSTANCE.isOpen()) {
+                        INSTANCE.close();
+                    }
+                    INSTANCE = null;
+                }
+            }
+        }
+    }
+
     private static final RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
