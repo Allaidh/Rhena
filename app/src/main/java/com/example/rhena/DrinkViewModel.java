@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class DrinkViewModel extends ViewModel {
     private final MutableLiveData<Integer> selectedDrinkId = new MutableLiveData<>(-1);
+    private final MutableLiveData<Long> databaseRefreshSignal = new MutableLiveData<>();
 
     public void selectDrink(int drinkId) {
         selectedDrinkId.setValue(drinkId);
@@ -17,5 +18,13 @@ public class DrinkViewModel extends ViewModel {
     
     public void clearSelection() {
         selectedDrinkId.setValue(-1);
+    }
+
+    public LiveData<Long> getDatabaseRefreshSignal() {
+        return databaseRefreshSignal;
+    }
+
+    public void notifyDatabaseRefreshed() {
+        databaseRefreshSignal.postValue(System.currentTimeMillis());
     }
 }

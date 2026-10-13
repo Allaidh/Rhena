@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import java.text.SimpleDateFormat;
@@ -48,6 +49,9 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         containerTW = view.findViewById(R.id.weekConsumptionContainer);
         drinkHistoryContainer = view.findViewById(R.id.drinkHistoryContainer);
+
+        DrinkViewModel viewModel = new ViewModelProvider(requireActivity()).get(DrinkViewModel.class);
+        viewModel.getDatabaseRefreshSignal().observe(getViewLifecycleOwner(), signal -> loadDrinks());
     }
 
     @Override
@@ -57,7 +61,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadDrinks() {
+        if (getContext() == null) return;
         Executors.newSingleThreadExecutor().execute(() -> {
+            if (getContext() == null) return;
             drinks = AppDatabase.getDatabase(requireContext().getApplicationContext()).drinkDao().getAll();
 
             LocalDate startOfWeek = LocalDate.now(zone)
